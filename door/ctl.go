@@ -8,12 +8,12 @@ import (
 
 // IsOpen returns true if the door is open
 func (d *Door) IsOpen() bool {
-	return d.State == Open
+	return State(d.State) == Open
 }
 
 // IsClosed returns true if the door is closed
 func (d *Door) IsClosed() bool {
-	return d.State == Closed
+	return State(d.State) == Closed
 }
 
 // IsLocked returns true if the door is locked
@@ -128,9 +128,9 @@ func (d *Door) startMonitor() {
 			default:
 				time.Sleep(MonitorSampleTime)
 				if sample, err := d.readState(); err == nil {
-					if d.State != sample {
+					if State(d.State) != sample {
 						d.LastStateChangeTimestamp = time.Now()
-						d.State = sample
+						d.State = int8(sample)
 					}
 				}
 			}
