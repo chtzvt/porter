@@ -29,5 +29,6 @@ func (l *LiftController) Call() {
 	l.HwPin.Toggle() // Transition to active state
 	time.Sleep(l.TripTime)
 	l.HwPin.Toggle() // Return to inactive state
-	l.HwPin.Write(0)
+
+	time.Sleep(100 * time.Millisecond)
 }
