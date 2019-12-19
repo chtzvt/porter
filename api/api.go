@@ -8,6 +8,7 @@ import (
 	"strings"
 )
 
+// Server represents an API Server, including its configuration parameters and lookup tables.
 type Server struct {
 	Config  *config.Config
 	KeyMap  map[string][]string

@@ -6,12 +6,18 @@ import (
 	"strings"
 )
 
+// genKeyMap converts an array of config.APIKey into a map of tokens ("Secrets") to
+// the whitelisted methods they are allowed to access.
+// This map generated once at startup and used to simplify permissions lookups.
 func (s *Server) genKeyMap() {
 	for _, apiKey := range s.Config.Keys {
 		s.KeyMap[apiKey.Secret] = apiKey.MethodWhitelist
 	}
 }
 
+// checkAuth enforces permissions on incoming HTTP requests
+// For API tokens provided in an incoming HTTP request, checkAuth ensures that the
+// resource being accessed is whitelisted.
 func (s *Server) checkAuth(h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Authorization is disabled because no API keys are configured

@@ -26,11 +26,15 @@ func main() {
 	defer func() {
 		err := hw.Close()
 		if err != nil {
-			panic(err)
+			fmt.Printf("Error un-initializing GPIO: %s", err.Error())
+			os.Exit(1)
 		}
 	}()
 
 	apiServer := api.NewServer(appCfg)
+	if err = apiServer.Serve(); err != nil {
+		fmt.Printf("API server died with error: %s", err.Error())
+		os.Exit(1)
+	}
 
-	panic(apiServer.Serve())
 }

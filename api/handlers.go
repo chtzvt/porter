@@ -53,7 +53,7 @@ func (s *Server) handleDoorOpen() http.HandlerFunc {
 
 		setResponseHeaders(w)
 
-		stat := NewStatus("", "")
+		stat := NewStatus()
 
 		if err = d.Open(); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -77,7 +77,7 @@ func (s *Server) handleDoorClose() http.HandlerFunc {
 
 		setResponseHeaders(w)
 
-		stat := NewStatus("", "")
+		stat := NewStatus()
 
 		if err = d.Close(); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -101,7 +101,7 @@ func (s *Server) handleDoorTrip() http.HandlerFunc {
 
 		setResponseHeaders(w)
 
-		stat := NewStatus("", "")
+		stat := NewStatus()
 
 		if err = d.Trip(); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -125,7 +125,7 @@ func (s *Server) handleDoorLock() http.HandlerFunc {
 
 		setResponseHeaders(w)
 
-		stat := NewStatus("OK", fmt.Sprintf("%s locked", d.Name))
+		stat := NewStatusString("OK", fmt.Sprintf("%s locked", d.Name))
 
 		d.Lock()
 
@@ -143,7 +143,7 @@ func (s *Server) handleDoorUnlock() http.HandlerFunc {
 
 		setResponseHeaders(w)
 
-		stat := NewStatus("OK", fmt.Sprintf("%s unlocked", d.Name))
+		stat := NewStatusString("OK", fmt.Sprintf("%s unlocked", d.Name))
 
 		d.Unlock()
 

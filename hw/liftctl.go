@@ -5,6 +5,8 @@ import (
 	"time"
 )
 
+// LiftController provides a simple mechanism to control and manage
+// a garage door lift with configurable parameters
 type LiftController struct {
 	HwPin         Pin
 	InactiveState State
@@ -12,6 +14,7 @@ type LiftController struct {
 	mutex         sync.Mutex
 }
 
+// NewLiftController returns a new LiftController instance using the provided configuration
 func NewLiftController(pin, inactiveState, tripTime int) *LiftController {
 	controller := new(LiftController)
 	controller.InactiveState = State(inactiveState)
@@ -22,6 +25,7 @@ func NewLiftController(pin, inactiveState, tripTime int) *LiftController {
 	return controller
 }
 
+// Call signals a LiftController to operate the physical garage door lift
 func (l *LiftController) Call() {
 	l.mutex.Lock()
 	defer l.mutex.Unlock()
@@ -30,5 +34,5 @@ func (l *LiftController) Call() {
 	time.Sleep(l.TripTime)
 	l.HwPin.Toggle() // Return to inactive state
 
-	time.Sleep(100 * time.Millisecond)
+	time.Sleep(100 * time.Millisecond) // slight debounce before releasing mutex
 }

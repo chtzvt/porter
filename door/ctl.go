@@ -1,27 +1,27 @@
+// Package door provides a management plane that integrates hardware components with control and monitoring logic.
 package door
 
 import (
 	"fmt"
-	"porter/hw"
 	"time"
 )
 
-func (d *Door) GetSensors() (*hw.DoorSensor, *hw.LiftController) {
-	return d.sensor, d.liftCtl
-}
-
+// IsOpen returns true if the door is open
 func (d *Door) IsOpen() bool {
 	return d.State == Open
 }
 
+// IsClosed returns true if the door is closed
 func (d *Door) IsClosed() bool {
 	return d.State == Closed
 }
 
+// IsLocked returns true if the door is locked
 func (d *Door) IsLocked() bool {
 	return d.Locked
 }
 
+// Open signals the door to open if it is unlocked, closed, and no other operations are pending
 func (d *Door) Open() error {
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
@@ -33,6 +33,7 @@ func (d *Door) Open() error {
 	return d.sendLiftCmd(Closed, false)
 }
 
+// Open signals the door to close if it is unlocked, open, and no other operations are pending
 func (d *Door) Close() error {
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
@@ -44,6 +45,7 @@ func (d *Door) Close() error {
 	return d.sendLiftCmd(Open, false)
 }
 
+// Lock enables a soft lock on the door, blocking any Open, Close, or Trip operations
 func (d *Door) Lock() {
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
@@ -51,6 +53,7 @@ func (d *Door) Lock() {
 	d.Locked = true
 }
 
+// Unlock removes a door's locked state
 func (d *Door) Unlock() {
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
@@ -58,6 +61,8 @@ func (d *Door) Unlock() {
 	d.Locked = false
 }
 
+// Trip sends a Call to the door's LiftController, overriding state checks
+// Trip requires a Door to be unlocked and have no other operations are pending
 func (d *Door) Trip() error {
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
@@ -70,6 +75,7 @@ func (d *Door) Trip() error {
 	return nil
 }
 
+// readState returns the DoorSensor's State
 func (d *Door) readState() (State, error) {
 	if !d.initialized {
 		return Open, fmt.Errorf("%s has not been initialized", d.Name)
@@ -82,6 +88,7 @@ func (d *Door) readState() (State, error) {
 	return Open, nil
 }
 
+// sendLiftCmd enforces state checks on calls to the LiftController
 func (d *Door) sendLiftCmd(requiredInitialState State, bypassStateCheck bool) error {
 	if !d.initialized {
 		return fmt.Errorf("%s has not been initialized", d.Name)
@@ -103,6 +110,11 @@ func (d *Door) sendLiftCmd(requiredInitialState State, bypassStateCheck bool) er
 	return nil
 }
 
+// startMonitor starts a goroutine that periodically samples a door's DoorSensor
+// This slightly improves performance because individual API calls don't trigger
+// relatively expensive GPIO read operations to fetch the state of the door.
+// It also allows state changes to be centrally tracked, so the server can produce
+// a timestamp of the last detected change in state.
 func (d *Door) startMonitor() {
 	if d.monitorStarted {
 		return
@@ -128,6 +140,7 @@ func (d *Door) startMonitor() {
 	d.monitorStarted = true
 }
 
+// stopMonitor kills the door state monitor
 func (d *Door) stopMonitor() {
 	if !d.monitorStarted {
 		return
