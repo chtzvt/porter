@@ -42,7 +42,6 @@ func (s *Server) Serve() error {
 	mux.Handle("/api/v1/list", s.checkAuth(s.handleListDoors()))
 
 	mux.Handle("/api/v1/state/", s.checkAuth(s.handleDoorState()))
-	mux.Handle("/api/v1/state/all", s.checkAuth(s.handleAllDoorState()))
 
 	mux.Handle("/api/v1/lock/", s.checkAuth(s.handleDoorLock()))
 	mux.Handle("/api/v1/unlock/", s.checkAuth(s.handleDoorUnlock()))

@@ -20,14 +20,6 @@ func (s *Server) handleListDoors() http.HandlerFunc {
 	}
 }
 
-func (s *Server) handleAllDoorState() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		setResponseHeaders(w)
-		w.WriteHeader(http.StatusOK)
-		_ = json.NewEncoder(w).Encode(s.Config.Doors)
-	}
-}
-
 func (s *Server) handleDoorState() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		d, err := s.getDoorFromPath(r)
