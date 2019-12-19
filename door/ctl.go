@@ -98,7 +98,7 @@ func (d *Door) sendLiftCmd(requiredInitialState State, bypassStateCheck bool) er
 
 	d.LastCmdTimestamp = time.Now()
 
-	go d.liftCtl.Call()
+	d.liftCtl.Call()
 
 	return nil
 }
