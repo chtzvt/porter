@@ -36,7 +36,7 @@ func (p *PorterClient) makeRequest(method, path, id string) *http.Request {
 	}
 
 	req, _ := http.NewRequest(method, url, nil)
-	req.Header.Add("Authentication", fmt.Sprintf("Bearer %s", p.APIKey))
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", p.APIKey))
 
 	return req
 }
