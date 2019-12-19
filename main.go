@@ -7,7 +7,6 @@ import (
 	"porter/api"
 	"porter/config"
 	"porter/hw"
-	"time"
 )
 
 func main() {
@@ -16,7 +15,7 @@ func main() {
 
 	appCfg, err := config.Load(*configFile)
 	if err != nil {
-		fmt.Printf("Error reading configuration file: %s", *configFile, err.Error())
+		fmt.Printf("Error reading configuration file: %s", err.Error())
 		os.Exit(1)
 	}
 
@@ -24,12 +23,14 @@ func main() {
 		fmt.Printf("Error initializing GPIO: %s", err.Error())
 		os.Exit(1)
 	}
-	defer hw.Close()
+	defer func() {
+		err := hw.Close()
+		if err != nil {
+			panic(err)
+		}
+	}()
 
 	apiServer := api.NewServer(appCfg)
-	go panic(apiServer.Serve())
 
-	for {
-		time.Sleep(60 * time.Second)
-	}
+	panic(apiServer.Serve())
 }

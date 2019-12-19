@@ -39,7 +39,12 @@ func Load(filepath string) (*Config, error) {
 		return &Config{}, err
 	}
 
-	defer cfgFile.Close()
+	defer func() {
+		err := cfgFile.Close()
+		if err != nil {
+			panic(err)
+		}
+	}()
 
 	parsedCfg := &Config{}
 

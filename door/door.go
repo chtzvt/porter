@@ -34,7 +34,7 @@ const (
 	Closed
 )
 
-const MonitorSampleTime = 1 * time.Second
+const MonitorSampleTime = 500 * time.Millisecond
 
 func New(c config.Door) *Door {
 	door := Door{
