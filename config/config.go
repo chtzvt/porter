@@ -56,19 +56,9 @@ func Load(filepath string) (*Config, error) {
 	return parsedCfg, nil
 }
 
-// String enables Porter's configuration to be serialized as a JSON string
+// String serializes Porter's configuration as a JSON string
 func (c *Config) String() string {
 	bytes, err := json.Marshal(c)
-	if err != nil {
-		return ""
-	}
-
-	return string(bytes)
-}
-
-// GetDoorList returns all configured doors in a JSON string.
-func (c *Config) GetDoorList() string {
-	bytes, err := json.Marshal(c.Doors)
 	if err != nil {
 		return ""
 	}
