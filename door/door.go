@@ -12,21 +12,12 @@ import (
 // properties that keep track of a garage door's running state
 type Door struct {
 	config.Door
-	liftCtl *hw.LiftController `json:"-"`
-	sensor  *hw.DoorSensor     `json:"-"`
-
-	State  State `json:"door_sensor_current_state"`
-	Locked bool  `json:"locked"`
-
-	initialized bool `json:"-"`
-
-	mutex sync.Mutex `json:"-"`
-
-	monitorStarted bool      `json:"-"`
-	monitorCtl     chan bool `json:"-"`
-
-	LastCmdTimestamp         time.Time `json:"last_cmd_ts"`
-	LastStateChangeTimestamp time.Time `json:"last_state_change_ts"`
+	liftCtl        *hw.LiftController `json:"-"`
+	sensor         *hw.DoorSensor     `json:"-"`
+	initialized    bool               `json:"-"`
+	mutex          sync.Mutex         `json:"-"`
+	monitorStarted bool               `json:"-"`
+	monitorCtl     chan bool          `json:"-"`
 }
 
 type State int8

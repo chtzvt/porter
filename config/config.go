@@ -5,6 +5,7 @@ package config
 import (
 	"encoding/json"
 	"os"
+	"time"
 )
 
 // Config contains the full contents of a Porter configuration file
@@ -22,6 +23,12 @@ type Door struct {
 	LiftCtlTripMs        int    `json:"lift_ctl_trip_time_ms"`
 	SensorPin            int    `json:"door_sensor_pin"`
 	SensorClosedState    int    `json:"door_sensor_closed_state"`
+
+	// The following aren't part of the configuration file
+	State                    int8      `json:"door_sensor_current_state"`
+	Locked                   bool      `json:"locked"`
+	LastCmdTimestamp         time.Time `json:"last_cmd_ts"`
+	LastStateChangeTimestamp time.Time `json:"last_state_change_ts"`
 }
 
 // APIKey contains an API key definition as read from a configuration file
