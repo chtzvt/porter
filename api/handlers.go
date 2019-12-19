@@ -14,7 +14,7 @@ func (s *Server) handleIndex() http.HandlerFunc {
 
 func (s *Server) handleListDoors() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
+		setResponseHeaders(w)
 		w.WriteHeader(http.StatusOK)
 		_ = json.NewEncoder(w).Encode(s.DoorMap)
 	}
@@ -22,7 +22,7 @@ func (s *Server) handleListDoors() http.HandlerFunc {
 
 func (s *Server) handleAllDoorState() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
+		setResponseHeaders(w)
 		w.WriteHeader(http.StatusOK)
 		_ = json.NewEncoder(w).Encode(s.Config.Doors)
 	}
@@ -36,8 +36,9 @@ func (s *Server) handleDoorState() http.HandlerFunc {
 			return
 		}
 
-		w.Header().Set("Content-Type", "application/json")
+		setResponseHeaders(w)
 		w.WriteHeader(http.StatusOK)
+
 		_ = json.NewEncoder(w).Encode(d)
 	}
 }
@@ -50,7 +51,8 @@ func (s *Server) handleDoorOpen() http.HandlerFunc {
 			return
 		}
 
-		w.Header().Set("Content-Type", "application/json")
+		setResponseHeaders(w)
+
 		stat := NewStatus("", "")
 
 		if err = d.Open(); err != nil {
@@ -73,7 +75,8 @@ func (s *Server) handleDoorClose() http.HandlerFunc {
 			return
 		}
 
-		w.Header().Set("Content-Type", "application/json")
+		setResponseHeaders(w)
+
 		stat := NewStatus("", "")
 
 		if err = d.Close(); err != nil {
@@ -96,7 +99,8 @@ func (s *Server) handleDoorTrip() http.HandlerFunc {
 			return
 		}
 
-		w.Header().Set("Content-Type", "application/json")
+		setResponseHeaders(w)
+
 		stat := NewStatus("", "")
 
 		if err = d.Trip(); err != nil {
@@ -119,7 +123,8 @@ func (s *Server) handleDoorLock() http.HandlerFunc {
 			return
 		}
 
-		w.Header().Set("Content-Type", "application/json")
+		setResponseHeaders(w)
+
 		stat := NewStatus("OK", fmt.Sprintf("%s locked", d.Name))
 
 		d.Lock()
@@ -136,11 +141,18 @@ func (s *Server) handleDoorUnlock() http.HandlerFunc {
 			return
 		}
 
-		w.Header().Set("Content-Type", "application/json")
+		setResponseHeaders(w)
+
 		stat := NewStatus("OK", fmt.Sprintf("%s unlocked", d.Name))
 
 		d.Unlock()
 
 		_ = json.NewEncoder(w).Encode(stat)
 	}
+}
+
+func setResponseHeaders(w http.ResponseWriter) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Server", "porter")
 }
