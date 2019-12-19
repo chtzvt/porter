@@ -1,6 +1,7 @@
 package hw
 
 import (
+	"sync"
 	"time"
 )
 
@@ -8,6 +9,7 @@ type LiftController struct {
 	HwPin         Pin
 	InactiveState State
 	TripTime      time.Duration
+	mutex         sync.Mutex
 }
 
 func NewLiftController(pin, inactiveState, tripTime int) *LiftController {
@@ -21,6 +23,9 @@ func NewLiftController(pin, inactiveState, tripTime int) *LiftController {
 }
 
 func (l *LiftController) Call() {
+	l.mutex.Lock()
+	defer l.mutex.Unlock()
+
 	l.HwPin.Toggle() // Transition to active state
 	time.Sleep(l.TripTime)
 	l.HwPin.Toggle() // Return to inactive state
