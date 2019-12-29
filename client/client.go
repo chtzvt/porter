@@ -9,25 +9,25 @@ import (
 
 const DoorIDEmpty string = ""
 
-type PorterClient struct {
+type Client struct {
 	HostURI string
 	APIKey  string
 	client  http.Client
 }
 
-func NewClient() *PorterClient {
-	c := new(PorterClient)
+func NewClient() *Client {
+	c := new(Client)
 	c.client.Timeout = 5 * time.Second
 
 	return c
 }
 
-func (p *PorterClient) Call(method, path, id string, dest interface{}) error {
+func (p *Client) Call(method, path, id string, dest interface{}) error {
 	req := p.makeRequest(method, path, id)
 	return p.sendRequest(req, dest)
 }
 
-func (p *PorterClient) makeRequest(method, path, id string) *http.Request {
+func (p *Client) makeRequest(method, path, id string) *http.Request {
 	url := p.HostURI
 	if id != DoorIDEmpty {
 		url = fmt.Sprintf("%s%s%s", p.HostURI, path, id)
@@ -41,7 +41,7 @@ func (p *PorterClient) makeRequest(method, path, id string) *http.Request {
 	return req
 }
 
-func (p *PorterClient) sendRequest(r *http.Request, target interface{}) error {
+func (p *Client) sendRequest(r *http.Request, target interface{}) error {
 	res, err := p.client.Do(r)
 	if err != nil {
 		return err
