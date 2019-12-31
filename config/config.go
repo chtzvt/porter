@@ -22,7 +22,7 @@ type Door struct {
 	LiftCtlInactiveState int    `json:"lift_ctl_inactive_state"`
 	LiftCtlTripMs        int    `json:"lift_ctl_trip_time_ms"`
 	SensorPin            int    `json:"door_sensor_pin"`
-	SensorClosedState    int    `json:"door_sensor_closed_state"`
+	SensorClosedState    int8    `json:"door_sensor_closed_state"`
 
 	// The following aren't part of the configuration file
 	State                    int8      `json:"door_sensor_current_state"`
