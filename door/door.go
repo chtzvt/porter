@@ -13,30 +13,30 @@ import (
 type Door struct {
 	config.Door
 	liftCtl        *hw.LiftController `json:"-"`
-	sensor         *hw.DoorSensor     `json:"-"`
+	sensor         hw.Pin             `json:"-"`
 	initialized    bool               `json:"-"`
 	mutex          sync.Mutex         `json:"-"`
 	monitorStarted bool               `json:"-"`
 	monitorCtl     chan bool          `json:"-"`
 }
 
-type State int8
-
-const (
-	Open State = iota
-	Closed
-)
-
 // MonitorSampleTime defines the interval at which a Door's sensor is polled for state changes
 const MonitorSampleTime = 500 * time.Millisecond
+
+const (
+	TargetStateOpen int8 = iota
+	TargetStateClosed
+)
 
 // New returns a new instance of a Door using the provided door configuration
 func New(c config.Door) *Door {
 	door := Door{
 		Door:    c,
 		liftCtl: hw.NewLiftController(c.LiftCtlPin, c.LiftCtlInactiveState, c.LiftCtlTripMs),
-		sensor:  hw.NewDoorSensor(c.SensorPin, c.SensorClosedState),
+		sensor:  hw.Pin(c.SensorPin),
 	}
+
+	door.sensor.Input()
 
 	door.initialized = true
 	door.startMonitor()
@@ -45,8 +45,8 @@ func New(c config.Door) *Door {
 }
 
 // GetSensors returns a Door's DoorSensor and LiftController, which are useful for debugging.
-func (d *Door) GetSensors() (*hw.DoorSensor, *hw.LiftController) {
-	return d.sensor, d.liftCtl
+func (d *Door) GetSensors() (*hw.Pin, *hw.LiftController) {
+	return &d.sensor, d.liftCtl
 }
 
 // String serializes a door's configuration as a JSON string
