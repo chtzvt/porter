@@ -3,17 +3,18 @@ package door
 
 import (
 	"fmt"
+	"porter/hw"
 	"time"
 )
 
 // IsOpen returns true if the door is open
 func (d *Door) IsOpen() bool {
-	return State(d.State) == Open
+	return d.State != 2 && d.State != d.SensorClosedState
 }
 
 // IsClosed returns true if the door is closed
 func (d *Door) IsClosed() bool {
-	return State(d.State) == Closed
+	return d.State == d.SensorClosedState
 }
 
 // IsLocked returns true if the door is locked
@@ -30,7 +31,7 @@ func (d *Door) Open() error {
 		return fmt.Errorf("%s is locked", d.Name)
 	}
 
-	return d.sendLiftCmd(Closed, false)
+	return d.sendLiftCmd(TargetStateOpen, false)
 }
 
 // Open signals the door to close if it is unlocked, open, and no other operations are pending
@@ -42,7 +43,7 @@ func (d *Door) Close() error {
 		return fmt.Errorf("%s is locked", d.Name)
 	}
 
-	return d.sendLiftCmd(Open, false)
+	return d.sendLiftCmd(TargetStateClosed, false)
 }
 
 // Lock enables a soft lock on the door, blocking any Open, Close, or Trip operations
@@ -71,40 +72,34 @@ func (d *Door) Trip() error {
 		return fmt.Errorf("trip %s failed due to lockout", d.Name)
 	}
 
-	_ = d.sendLiftCmd(Closed, true)
+	_ = d.sendLiftCmd(TargetStateClosed, true)
 	return nil
 }
 
 // readState returns the DoorSensor's State
-func (d *Door) readState() (State, error) {
+func (d *Door) readState() (hw.State, error) {
 	if !d.initialized {
-		return Open, fmt.Errorf("%s has not been initialized", d.Name)
+		return 2, fmt.Errorf("%s has not been initialized", d.Name)
 	}
 
-	if d.sensor.Closed() {
-		return Closed, nil
-	}
-
-	return Open, nil
+	return d.sensor.Read(), nil
 }
 
 // sendLiftCmd enforces state checks on calls to the LiftController
-func (d *Door) sendLiftCmd(requiredInitialState State, bypassStateCheck bool) error {
+func (d *Door) sendLiftCmd(requiredInitialState int8, bypassStateCheck bool) error {
 	if !d.initialized {
 		return fmt.Errorf("%s has not been initialized", d.Name)
 	}
 
-	doorState, err := d.readState()
-	if err != nil {
-		return err
-	}
-
-	if bypassStateCheck || doorState == requiredInitialState {
-		return fmt.Errorf("%s is already in the requested state", d.Name)
+	if bypassStateCheck == false {
+		if (requiredInitialState == TargetStateClosed && d.IsClosed()) || (requiredInitialState == TargetStateOpen && d.IsOpen()) {
+			return fmt.Errorf("%s is already in the requested state", d.Name)
+		}
 	}
 
 	d.LastCmdTimestamp = time.Now()
 
+	fmt.Printf("[%v] DOORCTL Activating lift on door '%s'\n", time.Now(), d.Name)
 	d.liftCtl.Call()
 
 	return nil
@@ -124,20 +119,24 @@ func (d *Door) startMonitor() {
 		for {
 			select {
 			case <-d.monitorCtl:
+				d.State = 2
 				return
 			default:
 				time.Sleep(MonitorSampleTime)
-				if sample, err := d.readState(); err == nil {
-					if State(d.State) != sample {
-						d.LastStateChangeTimestamp = time.Now()
-						d.State = int8(sample)
-					}
+				sample, err := d.readState()
+				if err != nil {
+					continue
 				}
+
+				if !d.monitorStarted || hw.State(d.State) != sample {
+					d.LastStateChangeTimestamp = time.Now()
+					d.State = int8(sample)
+				}
+
+				d.monitorStarted = true
 			}
 		}
 	})()
-
-	d.monitorStarted = true
 }
 
 // stopMonitor kills the door state monitor
