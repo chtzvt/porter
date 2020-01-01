@@ -102,7 +102,8 @@ func (s *Server) handleDoorLock() http.HandlerFunc {
 
 		setResponseHeaders(w)
 
-		stat := NewStatusString("OK", fmt.Sprintf("%s locked", d.Name))
+		stat := NewStatus()
+		stat.Set("OK", fmt.Sprintf("%s locked", d.Name))
 
 		d.Lock()
 
@@ -120,7 +121,8 @@ func (s *Server) handleDoorUnlock() http.HandlerFunc {
 
 		setResponseHeaders(w)
 
-		stat := NewStatusString("OK", fmt.Sprintf("%s unlocked", d.Name))
+		stat := NewStatus()
+		stat.Set("OK", fmt.Sprintf("%s unlocked", d.Name))
 
 		d.Unlock()
 
