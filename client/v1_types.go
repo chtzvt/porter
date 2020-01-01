@@ -4,7 +4,6 @@ import "time"
 
 const (
 	V1GetDoorList  string = "/api/v1/list"
-	V1GetDoorState string = "/api/v1/state/"
 	V1LockDoor     string = "/api/v1/lock/"
 	V1UnlockDoor   string = "/api/v1/unlock/"
 	V1OpenDoor     string = "/api/v1/open/"
