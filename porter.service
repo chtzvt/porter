@@ -1,0 +1,15 @@
+[Unit]
+Description=Porter API Server
+After=syslog.target network-online.target
+
+[Service]
+Type=simple
+User=porter
+EnvironmentFile=/etc/default/porter
+ExecStart=/usr/local/bin/porter $PORTER_OPTS
+Restart=on-failure
+RestartSec=5
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target
