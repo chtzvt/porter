@@ -39,16 +39,18 @@ func (s *Server) Serve() error {
 		mux.Handle("/", http.RedirectHandler("https://github.com/ctrezevant/porter", http.StatusFound))
 	}
 
+	// Permission level ro
 	mux.Handle("/api/v1/list", s.log(s.checkAuth(s.handleListDoors())))
-
 	mux.Handle("/api/v1/state/", s.log(s.checkAuth(s.handleDoorState())))
 
-	mux.Handle("/api/v1/lock/", s.log(s.checkAuth(s.handleDoorLock())))
-	mux.Handle("/api/v1/unlock/", s.log(s.checkAuth(s.handleDoorUnlock())))
-
+	// Permission level rw
 	mux.Handle("/api/v1/open/", s.log(s.checkAuth(s.handleDoorOpen())))
 	mux.Handle("/api/v1/close/", s.log(s.checkAuth(s.handleDoorClose())))
 	mux.Handle("/api/v1/trip/", s.log(s.checkAuth(s.handleDoorTrip())))
+
+	// Permission level *
+	mux.Handle("/api/v1/lock/", s.log(s.checkAuth(s.handleDoorLock())))
+	mux.Handle("/api/v1/unlock/", s.log(s.checkAuth(s.handleDoorUnlock())))
 
 	if s.Config.HTTP.TLSCertFile != "" && s.Config.HTTP.TLSKeyFile != "" {
 		return http.ListenAndServeTLS(s.Config.HTTP.ListenAddr, s.Config.HTTP.TLSCertFile, s.Config.HTTP.TLSKeyFile, mux)
