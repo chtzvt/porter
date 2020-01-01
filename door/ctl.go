@@ -99,7 +99,7 @@ func (d *Door) sendLiftCmd(requiredInitialState int8, bypassStateCheck bool) err
 
 	d.LastCmdTimestamp = time.Now()
 
-	fmt.Printf("[%v] DOORCTL Activating lift on door '%s'\n", time.Now(), d.Name)
+	fmt.Printf("%v DOORCTL Activating lift on door '%s'\n", time.Now(), d.Name)
 	d.liftCtl.Call()
 
 	return nil
