@@ -18,6 +18,11 @@ type Door struct {
 	mutex          sync.Mutex         `json:"-"`
 	monitorStarted bool               `json:"-"`
 	monitorCtl     chan bool          `json:"-"`
+
+	State                    int8      `json:"door_sensor_current_state"`
+	Locked                   bool      `json:"locked"`
+	LastCmdTimestamp         time.Time `json:"last_cmd_ts"`
+	LastStateChangeTimestamp time.Time `json:"last_state_change_ts"`
 }
 
 // MonitorSampleTime defines the interval at which a Door's sensor is polled for state changes

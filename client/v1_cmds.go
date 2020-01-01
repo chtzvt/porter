@@ -2,21 +2,10 @@ package client
 
 import (
 	"porter/api"
-	"porter/config"
 )
 
-const (
-	V1GetDoorList  string = "/api/v1/list"
-	V1GetDoorState string = "/api/v1/state/"
-	V1LockDoor     string = "/api/v1/lock/"
-	V1UnlockDoor   string = "/api/v1/unlock/"
-	V1OpenDoor     string = "/api/v1/open/"
-	V1CloseDoor    string = "/api/v1/close/"
-	V1TripDoor     string = "/api/v1/trip/"
-)
-
-func (p *Client) List() (map[string]config.Door, error) {
-	list := new(map[string]config.Door)
+func (p *Client) List() (map[string]V1DoorState, error) {
+	list := new(map[string]V1DoorState)
 
 	if err := p.Call("GET", V1GetDoorList, DoorIDEmpty, list); err != nil {
 		return nil, err
@@ -25,11 +14,11 @@ func (p *Client) List() (map[string]config.Door, error) {
 	return *list, nil
 }
 
-func (p *Client) GetState(id string) (config.Door, error) {
-	state := new(config.Door)
+func (p *Client) GetState(id string) (V1DoorState, error) {
+	state := new(V1DoorState)
 
 	if err := p.Call("GET", V1GetDoorState, id, state); err != nil {
-		return config.Door{}, err
+		return V1DoorState{}, err
 	}
 
 	return *state, nil
