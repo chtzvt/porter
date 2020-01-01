@@ -49,12 +49,23 @@ func (s *Server) checkAuth(h http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
+		method := getMethodName(r.URL.Path)
+
 		// Requested method not in API Key whitelist
-		if i := sort.SearchStrings(allowedMethods, r.URL.Path); i >= len(allowedMethods) || allowedMethods[i] != r.URL.Path {
+		if i := sort.SearchStrings(allowedMethods, method); i >= len(allowedMethods) || allowedMethods[i] != method {
 			http.Error(w, NewStatusString("error", "unauthorized"), http.StatusForbidden)
 			return
 		}
 
 		h(w, r)
 	}
+}
+
+func getMethodName(path string) string {
+	basePath := strings.Replace(path, "/api/v1/", "", 1)
+	if trailingSlash := strings.LastIndex(basePath, "/"); trailingSlash != -1 {
+		return basePath[:trailingSlash]
+	}
+
+	return basePath
 }
