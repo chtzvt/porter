@@ -69,7 +69,7 @@ func (d *Door) Trip() error {
 	defer d.mutex.Unlock()
 
 	if d.IsLocked() {
-		return fmt.Errorf("trip %s failed due to lockout", d.Name)
+		return fmt.Errorf("%s is locked", d.Name)
 	}
 
 	_ = d.sendLiftCmd(TargetStateClosed, true)
