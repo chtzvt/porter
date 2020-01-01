@@ -15,13 +15,11 @@ func (p *Client) List() (map[string]V1DoorState, error) {
 }
 
 func (p *Client) GetState(id string) (V1DoorState, error) {
-	state := new(V1DoorState)
-
-	if err := p.Call("GET", V1GetDoorState, id, state); err != nil {
+	if states, err := p.List(); err == nil {
+		return states[id], nil
+	} else {
 		return V1DoorState{}, err
 	}
-
-	return *state, nil
 }
 
 func (p *Client) SendCmd(cmd, id string) (api.StatusMsg, error) {

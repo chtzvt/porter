@@ -20,21 +20,6 @@ func (s *Server) handleListDoors() http.HandlerFunc {
 	}
 }
 
-func (s *Server) handleDoorState() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		d, err := s.getDoorFromPath(r)
-		if err != nil {
-			http.Error(w, NewStatusString("error", err.Error()), http.StatusBadRequest)
-			return
-		}
-
-		setResponseHeaders(w)
-		w.WriteHeader(http.StatusOK)
-
-		_ = json.NewEncoder(w).Encode(d)
-	}
-}
-
 func (s *Server) handleDoorOpen() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		d, err := s.getDoorFromPath(r)

@@ -41,7 +41,6 @@ func (s *Server) Serve() error {
 
 	// Permission level ro
 	mux.Handle("/api/v1/list", s.log(s.checkAuth(s.handleListDoors())))
-	mux.Handle("/api/v1/state/", s.log(s.checkAuth(s.handleDoorState())))
 
 	// Permission level rw
 	mux.Handle("/api/v1/open/", s.log(s.checkAuth(s.handleDoorOpen())))
