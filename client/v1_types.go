@@ -3,12 +3,12 @@ package client
 import "time"
 
 const (
-	V1GetDoorList  string = "/api/v1/list"
-	V1LockDoor     string = "/api/v1/lock/"
-	V1UnlockDoor   string = "/api/v1/unlock/"
-	V1OpenDoor     string = "/api/v1/open/"
-	V1CloseDoor    string = "/api/v1/close/"
-	V1TripDoor     string = "/api/v1/trip/"
+	V1GetDoorList string = "/api/v1/list"
+	V1LockDoor    string = "/api/v1/lock/"
+	V1UnlockDoor  string = "/api/v1/unlock/"
+	V1OpenDoor    string = "/api/v1/open/"
+	V1CloseDoor   string = "/api/v1/close/"
+	V1TripDoor    string = "/api/v1/trip/"
 )
 
 type V1DoorState struct {
