@@ -14,7 +14,7 @@ func (s *Server) handleIndex() http.HandlerFunc {
 
 func (s *Server) handleListDoors() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		setResponseHeaders(w)
+		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		_ = json.NewEncoder(w).Encode(s.DoorMap)
 	}
@@ -28,7 +28,7 @@ func (s *Server) handleDoorOpen() http.HandlerFunc {
 			return
 		}
 
-		setResponseHeaders(w)
+		w.Header().Set("Content-Type", "application/json")
 
 		stat := NewStatus()
 
@@ -52,7 +52,7 @@ func (s *Server) handleDoorClose() http.HandlerFunc {
 			return
 		}
 
-		setResponseHeaders(w)
+		w.Header().Set("Content-Type", "application/json")
 
 		stat := NewStatus()
 
@@ -76,7 +76,7 @@ func (s *Server) handleDoorTrip() http.HandlerFunc {
 			return
 		}
 
-		setResponseHeaders(w)
+		w.Header().Set("Content-Type", "application/json")
 
 		stat := NewStatus()
 
@@ -100,7 +100,7 @@ func (s *Server) handleDoorLock() http.HandlerFunc {
 			return
 		}
 
-		setResponseHeaders(w)
+		w.Header().Set("Content-Type", "application/json")
 
 		stat := NewStatus()
 		stat.Set("OK", fmt.Sprintf("%s locked", d.Name))
@@ -119,7 +119,7 @@ func (s *Server) handleDoorUnlock() http.HandlerFunc {
 			return
 		}
 
-		setResponseHeaders(w)
+		w.Header().Set("Content-Type", "application/json")
 
 		stat := NewStatus()
 		stat.Set("OK", fmt.Sprintf("%s unlocked", d.Name))
@@ -128,10 +128,4 @@ func (s *Server) handleDoorUnlock() http.HandlerFunc {
 
 		_ = json.NewEncoder(w).Encode(stat)
 	}
-}
-
-func setResponseHeaders(w http.ResponseWriter) {
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Server", "porter")
 }

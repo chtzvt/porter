@@ -20,6 +20,8 @@ func (s *Server) genKeyMap() {
 // resource being accessed is whitelisted.
 func (s *Server) checkAuth(h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+
 		// Authorization is disabled because no API keys are configured
 		if len(s.KeyMap) == 0 {
 			h(w, r)
