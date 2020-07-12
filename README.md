@@ -77,11 +77,12 @@ For the lift, make sure that your relay is in a normally open state on the contr
 
 For security reasons, I highly recommend running the Porter service as its own dedicated, unprivileged user account. You can create this account using the commands below:
 
-Note: Adding the `porter` user to the GPIO group is an important step, as it provides the necessary permissions for Porter to modify the Pi's GPIO pins.
+Note: Adding the `porter` user to the GPIO group is an important step, as it provides the necessary permissions for Porter to modify the Pi's GPIO pins. At the time of writing Porter, certain elements of this were still under development. If you're still getting permissions errors about accessing `/dev/gpiomem` after adding the porter user to the `gpio group`, you may need to copy the udev rules in this repository (in `scripts/udev.rules`) to `/etc/udev/rules.d/gpio.rules` and reboot for the below to work.
 
 ```
-adduser --system --no-create-home --group porter
-usermod -a -G gpio porter
+useradd -M -N -r -s /bin/false -c "porter service account" porter
+groupadd porter
+adduser porter porter
 ```
 
 ### Adding Porter to Systemd
