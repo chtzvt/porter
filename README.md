@@ -20,6 +20,21 @@ in building integrations (such as the [HomeKit integration](https://github.com/c
 which support can be added for additional boards. The `porter/hw` package serves as a wrapper around platform-specific libraries, so you could (in theory) update those
 bindings to your library of choice and be on your way with your favorite board.
 
+## Secure, Sane, and Simple API
+
+The Porter API is quite simple to use and should be easy to integrate into other projects and solutions like Homeassistant.
+
+Included in this repository is a fully-functional API client library, `porter/client`. You can use this library to add Porter support to your other Go projects.
+
+I've built multiple integrations using the Porter API. Here are a few:
+
+- The [HKPorter](https://github.com/ctrezevant/hkporter) HomeKit daemon, 
+
+- The [porter-web](https://github.com/ctrezevant/porter-web) web UI, and 
+
+- [Reporter](https://github.com/ctrezevant/reporter), a Twilio-based SMS notifier that tells you if the door has been left open/ajar for too long.
+
+Be sure to check out those projects if you're interested in their functionality, or are seeking more examples of how to use the API and client library.
 
 # Installation
 
@@ -229,7 +244,3 @@ curl -H "Authorization: Bearer $PORTER_TOKEN" http://$PORTER_IP/api/v1/open/$POR
 ```
 curl -H "Authorization: Bearer $PORTER_TOKEN" http://$PORTER_IP/api/v1/close/$PORTER_DOOR
 ```
-
-As you can see, the API is quite simple to use and should be easy to integrate into other projects and solutions like Homeassistant.
-
-Included in this repository is a fully-functional API client library, `porter/client`. You can use this library to add Porter support to your other Go projects, as I've done with the [HomeKit integration](https://github.com/ctrezevant/hkporter), [web interface](https://github.com/ctrezevant/porter-web), and [Twilio-based status monitor](https://github.com/ctrezevant/reporter). Be sure to check out those projects if you're interested in their functionality, or are seeking more examples of how to use the API and client library.
